@@ -50,36 +50,48 @@ router.post("/post-query-2", function (req, res) {
 // also return an array consisting of only the person that can vote
 
 //  take this as sample for array of persons:
-// let persons= [
-//     {
-//     name: "PK",
-//     age: 10,
-//     votingStatus: false
-// },
-// {
-//     name: "SK",
-//     age: 20,
-//     votingStatus: false
-// },
-// {
-//     name: "AA",
-//     age: 70,
-//     votingStatus: false
-// },
-// {
-//     name: "SC",
-//     age: 5,
-//     votingStatus: false
-// },
-// {
-//     name: "HO",
-//     age: 40,
-//     votingStatus: false
-// }
-// ]
+let persons= [
+    {
+    name: "RJ",
+    age: 10,
+    votingStatus: false
+},
+{
+    name: "TK",
+    age: 20,
+    votingStatus: false
+},
+{
+    name: "RG",
+    age: 70,
+    votingStatus: false
+},
+{
+    name: "DK",
+    age: 5,
+    votingStatus: false
+},
+{
+    name: "HP",
+    age: 40,
+    votingStatus: false
+}
+]
+
+router.post("/voters",function(req,res){
+    let votingAge = req.query.votingAge
+
+    for(let i =0;i<persons.length;i++){
+        persons[i].votingStatus =true
+}
 
 
+console.log(persons)
+let x =persons.filter(ele=>ele.age>votingAge)
 
+console.log(x)
+return res.send(x)
 
+})
 
 module.exports = router;
