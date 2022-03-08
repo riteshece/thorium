@@ -12,7 +12,7 @@ const bookSchema = new mongoose.Schema( {
     },
     sales: {type: Number, default: 10},
     
-    // " best boook on earth"   [ "Nodejs in detail" , "mongodb in detail", "fronend in detail"] 
+    // " best boook on earth"   [ "Nodejs in detail" , "mongodb in detail", "frontend in detail"] 
     // {
         // "ch1 ": "awesome intro to JS",
         // "ch2" : "intro to nodejs",

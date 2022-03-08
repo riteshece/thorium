@@ -9,7 +9,7 @@ const createUser= async function (req, res) {
 
 const getUsersData= async function (req, res) {
     let allUsers= await UserModel.find()
-    console.log(req.newAtribute)
+    console.log(req.newAttribute)
     res.send({msg: allUsers})
 }
 
