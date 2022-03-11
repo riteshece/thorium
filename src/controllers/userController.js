@@ -1,14 +1,25 @@
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/userModel");
 
-const createUser = async function (abcd, xyz) {
+const createUser = async function (req, res) {
   //You can name the req, res objects anything.
   //but the first parameter is always the request 
   //the second parameter is always the response
-  let data = abcd.body;
+  try{
+  let data = req.body;
+  console.log(data)
+  if(data){
+
   let savedData = await userModel.create(data);
-  console.log(abcd.newAtribute);
-  xyz.send({ msg: savedData });
+  
+  res.status(201).send({ msg:savedData })
+  }
+  else res.status(400).send({msg:"bad request"})
+}
+  catch(err){
+    console.log("this is error",err.message) 
+    res.send({msg:"error",error:err.message})
+  }
 };
 
 const loginUser = async function (req, res) {
