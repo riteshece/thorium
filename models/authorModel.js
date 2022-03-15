@@ -8,7 +8,7 @@ const authorModel = new mongoose.Schema(
         email : {type: String,
             required: true,
             unique: true,
-            match: /.+\@.+\..+/},
+            match: /.+\@.+\..+/}, 
         password: {type:String, required:true}
 
 

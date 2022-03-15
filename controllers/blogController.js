@@ -22,64 +22,83 @@ const createBlog = async (req, res) => {
 };
 
 const getBlogs = async (req, res) => {
-    try {
-        // let authorId = req.query.authorId;
-        // let matchAId = await authorModel.findById(authorId);
-        // if(!matchAId){
-        //     return res.status(404).json({status:false, msg:"Invalid Author ID!"});
-        // }
-        let blogs = await blogModel.find(req.query);
-        res.status(201).send({status:true, data:blogs});
-    } catch (error) {
-        return res.status(500).json({ status: false, error: error.message });
+  try {
+    
+    let blogs = await blogModel.find(req.query);
+    if(!blogs){
+        return res.status(404).send({status:false, msg:"No Blog Found"});
     }
+    res.status(201).send({ status: true, data: blogs });
+  } catch (error) {
+    return res.status(500).json({ status: false, error: error.message });
+  }
 };
 
-const updateBlog = async (req,res)=>{
-    try {
-        
-        const blogId = req.params.blogId;
-        const data = req.body;
-        const deleteTrue = await blogModel.findById(blogId);
-        if(deleteTrue.isDeleted){
-            return res.status(404).json({status:false, msg:"ID not found!"});
-        }
-        
-
-        const blog = await blogModel.findOneAndUpdate({_id:blogId}, req.body, {new: true, runValidators:true});
-
-        
-        if(!blog){
-            return res.status(404).json({msg: `No blog with id: ${blogId}`});
-        }
-        res.status(200).json({id:blogId, data:req.body});
-    } catch (error) {
-        res.status(500).json({ msg:"Error", Error: error.message});
+const updateBlog = async (req, res) => {
+  try {
+      
+    const blogId = req.params.blogId;
+    const data = req.body;
+    if(Object.keys(data).length == 0){
+        return res.status(400).send({status:false, msg:"Invalid Request!"});
+    }
+    const deleteTrue = await blogModel.findById(blogId);
+    if (deleteTrue.isDeleted) {
+      return res.status(404).json({ status: false, msg: "ID not found!" });
     }
 
+    const blog = await blogModel.findOneAndUpdate({ _id: blogId }, req.body, {
+      new: true,
+      runValidators: true,
+    });
 
-}
+    if (!blog) {
+      return res.status(404).json({ msg: `No blog with id: ${blogId}` });
+    }
+    res.status(200).json({ id: blogId, data: req.body });
+  } catch (error) {
+    res.status(500).json({ msg: "Error", Error: error.message });
+  }
+};
 
-const deleteById = async (req,res)=>{
+const deleteById = async (req, res) => {
+  try {
+    const blogId = req.params.blogId;
+    const idCheck = await blogModel.findById(blogId);
+    if (!idCheck) {
+      return res.status(404).send({ status: false, msg: "Invalid Author ID!" });
+    }
+    const searchId = await blogModel.findByIdAndUpdate(blogId, {
+      isDeleted: true,
+      deletedAt: new Date(),
+      new: true,
+    });
+    res.status(200).send({ status: true, msg: "ID deleted Successfully" });
+  } catch (error) {
+    res.status(500).json({ msg: "Error", Error: error.message });
+  }
+};
+
+const deleteByQuery = async (req, res) => {
     try {
-        const blogId = req.params.blogId;
-        const idCheck = await blogModel.findById(blogId);
-        if(!idCheck){
-            return res.status(404).send({status:false, msg:"Invalid Author ID!"});
+        let blogs = await blogModel.find(req.query);
+        //console.log(blogs);
+        for(let i=0; i<blogs.length; i++){
+            blogs[i].isDeleted = true;
         }
-        const searchId = await blogModel.findByIdAndUpdate(blogId, {isDeleted:true, deletedAt: new Date(), new:true});
-        res.status(200).send({status:true, msg: "ID deleted Successfully"});
-
+        let changeBlog =  blogModel.updateMany(blogs,{isDeleted: true, new:true});
+        
+        res.status(200).json({status:true, msg:"Deleted Successfully!", data:blogs});
         
     } catch (error) {
-        res.status(500).json({ msg:"Error", Error: error.message});
+        res.status(500).json({ msg: "Error", Error: error.message });
     }
-
 }
 
 module.exports = {
   createBlog,
   getBlogs,
   updateBlog,
-  deleteById
+  deleteById,
+  deleteByQuery,
 };
